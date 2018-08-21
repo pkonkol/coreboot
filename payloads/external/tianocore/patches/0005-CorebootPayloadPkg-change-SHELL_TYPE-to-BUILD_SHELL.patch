@@ -1,0 +1,29 @@
+From d6d95a516779882427f3c77dff0007bca32059f7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Sat, 15 Jul 2017 00:33:34 +0200
+Subject: [PATCH 5/9] CorebootPayloadPkg: change SHELL_TYPE to BUILD_SHELL
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ CorebootPayloadPkg/CorebootPayloadPkgIa32X64.dsc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CorebootPayloadPkg/CorebootPayloadPkgIa32X64.dsc b/CorebootPayloadPkg/CorebootPayloadPkgIa32X64.dsc
+index 2492142b972d..b499dbbdd685 100644
+--- a/CorebootPayloadPkg/CorebootPayloadPkgIa32X64.dsc
++++ b/CorebootPayloadPkg/CorebootPayloadPkgIa32X64.dsc
+@@ -85,7 +85,7 @@
+   #
+   # Shell options: [BUILD_SHELL, FULL_BIN, MIN_BIN, NONE, UEFI]
+   #
+-  DEFINE SHELL_TYPE              = FULL_BIN
++  DEFINE SHELL_TYPE              = BUILD_SHELL
+ 
+ [BuildOptions]
+   *_*_*_CC_FLAGS                 = -D DISABLE_NEW_DEPRECATED_INTERFACES
+-- 
+2.17.1
+

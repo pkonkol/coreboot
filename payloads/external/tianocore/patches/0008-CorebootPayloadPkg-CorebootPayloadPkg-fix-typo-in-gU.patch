@@ -1,0 +1,30 @@
+From e94b8ca255dadf1c80e14d41448a0fafe34e850a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Wed, 4 Apr 2018 15:49:21 +0200
+Subject: [PATCH 8/9] CorebootPayloadPkg/CorebootPayloadPkg: fix typo in
+ gUefiCorebootPayloadPkgTokenSpaceGuid
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ CorebootPayloadPkg/CorebootPayloadPkg.dec | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CorebootPayloadPkg/CorebootPayloadPkg.dec b/CorebootPayloadPkg/CorebootPayloadPkg.dec
+index 309617668c40..cacdc30944e6 100644
+--- a/CorebootPayloadPkg/CorebootPayloadPkg.dec
++++ b/CorebootPayloadPkg/CorebootPayloadPkg.dec
+@@ -26,7 +26,7 @@
+   #
+   ## Defines the token space for the Coreboot Payload Package PCDs.
+   #
+-  gUEfiCorebootPayloadPkgTokenSpaceGuid  = {0x1d127ea, 0xf6f1, 0x4ef6, {0x94, 0x15, 0x8a, 0x0, 0x0, 0x93, 0xf8, 0x9d}}
++  gUefiCorebootPayloadPkgTokenSpaceGuid  = {0x1d127ea, 0xf6f1, 0x4ef6, {0x94, 0x15, 0x8a, 0x0, 0x0, 0x93, 0xf8, 0x9d}}
+ 
+   #
+   # Gop Temp
+-- 
+2.17.1
+

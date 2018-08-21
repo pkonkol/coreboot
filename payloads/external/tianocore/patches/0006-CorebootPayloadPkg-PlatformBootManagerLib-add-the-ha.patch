@@ -1,0 +1,116 @@
+From 17cd574bcc33d11a2b5a9b286818a53bb505fd7d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Sat, 15 Jul 2017 00:35:48 +0200
+Subject: [PATCH 6/9] CorebootPayloadPkg/PlatformBootManagerLib: add the
+ hardcoded device paths for ConIn/ConOut/ErrOut
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ .../PlatformBootManager.c                     | 71 +++++++++++++++++++
+ .../PlatformBootManagerLib.inf                |  1 +
+ 2 files changed, 72 insertions(+)
+
+diff --git a/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManager.c b/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManager.c
+index 7e92441da11f..200127e2440d 100644
+--- a/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManager.c
++++ b/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManager.c
+@@ -16,6 +16,65 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+ #include "PlatformBootManager.h"
+ #include "PlatformConsole.h"
+ 
++#define DP_NODE_LEN(Type) { (UINT8)sizeof (Type), (UINT8)(sizeof (Type) >> 8) }
++
++#pragma pack (1)
++typedef struct {
++  VENDOR_DEVICE_PATH         SerialDxe;
++  UART_DEVICE_PATH           Uart;
++  VENDOR_DEFINED_DEVICE_PATH TermType;
++  EFI_DEVICE_PATH_PROTOCOL   End;
++} PLATFORM_SERIAL_CONSOLE;
++#pragma pack ()
++
++#define SERIAL_DXE_FILE_GUID { \
++          0xD3987D4B, 0x971A, 0x435F, \
++          { 0x8C, 0xAF, 0x49, 0x67, 0xEB, 0x62, 0x72, 0x41 } \
++          }
++
++STATIC PLATFORM_SERIAL_CONSOLE mSerialConsole = {
++  //
++  // VENDOR_DEVICE_PATH SerialDxe
++  //
++  {
++    { HARDWARE_DEVICE_PATH, HW_VENDOR_DP, DP_NODE_LEN (VENDOR_DEVICE_PATH) },
++    SERIAL_DXE_FILE_GUID
++  },
++
++  //
++  // UART_DEVICE_PATH Uart
++  //
++  {
++    { MESSAGING_DEVICE_PATH, MSG_UART_DP, DP_NODE_LEN (UART_DEVICE_PATH) },
++    0,                                      // Reserved
++    FixedPcdGet64 (PcdUartDefaultBaudRate), // BaudRate
++    FixedPcdGet8 (PcdUartDefaultDataBits),  // DataBits
++    FixedPcdGet8 (PcdUartDefaultParity),    // Parity
++    FixedPcdGet8 (PcdUartDefaultStopBits)   // StopBits
++  },
++
++  //
++  // VENDOR_DEFINED_DEVICE_PATH TermType
++  //
++  {
++    {
++      MESSAGING_DEVICE_PATH, MSG_VENDOR_DP,
++      DP_NODE_LEN (VENDOR_DEFINED_DEVICE_PATH)
++    }
++    //
++    // Guid to be filled in dynamically
++    //
++  },
++
++  //
++  // EFI_DEVICE_PATH_PROTOCOL End
++  //
++  {
++    END_DEVICE_PATH_TYPE, END_ENTIRE_DEVICE_PATH_SUBTYPE,
++    DP_NODE_LEN (EFI_DEVICE_PATH_PROTOCOL)
++  }
++};
++
+ VOID
+ InstallReadyToLock (
+   VOID
+@@ -188,6 +247,18 @@ PlatformBootManagerBeforeConsole (
+   EfiBootManagerGetBootManagerMenu (&BootOption);
+   EfiBootManagerAddKeyOptionVariable (NULL, (UINT16) BootOption.OptionNumber, 0, &Down, NULL);
+ 
++  //
++  // Add the hardcoded serial console device path to ConIn, ConOut, ErrOut.
++  //
++  CopyGuid (&mSerialConsole.TermType.Guid,
++    PcdGetPtr (PcdTerminalTypeGuidBuffer));
++  EfiBootManagerUpdateConsoleVariable (ConIn,
++    (EFI_DEVICE_PATH_PROTOCOL *)&mSerialConsole, NULL);
++  EfiBootManagerUpdateConsoleVariable (ConOut,
++    (EFI_DEVICE_PATH_PROTOCOL *)&mSerialConsole, NULL);
++  EfiBootManagerUpdateConsoleVariable (ErrOut,
++    (EFI_DEVICE_PATH_PROTOCOL *)&mSerialConsole, NULL);
++
+   //
+   // Install ready to lock.
+   // This needs to be done before option rom dispatched.
+diff --git a/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf b/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
+index 9e8ae9b36a0e..0c62cbcead35 100644
+--- a/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
++++ b/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
+@@ -78,3 +78,4 @@
+   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultDataBits
+   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultParity
+   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultStopBits
++  gUefiCorebootPayloadPkgTokenSpaceGuid.PcdTerminalTypeGuidBuffer
+-- 
+2.17.1
+

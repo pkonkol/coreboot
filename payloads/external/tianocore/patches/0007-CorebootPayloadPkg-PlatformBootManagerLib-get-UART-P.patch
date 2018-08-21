@@ -1,0 +1,49 @@
+From b2c2b022c64f4e2a3ec73c5a222f0ec8105312c2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Sat, 5 Aug 2017 02:04:36 +0200
+Subject: [PATCH 7/9] CorebootPayloadPkg/PlatformBootManagerLib: get UART PCDs
+ on runtime
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ .../PlatformBootManagerLib/PlatformBootManager.c   | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManager.c b/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManager.c
+index 200127e2440d..bf3ddab65c4b 100644
+--- a/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManager.c
++++ b/CorebootPayloadPkg/Library/PlatformBootManagerLib/PlatformBootManager.c
+@@ -46,11 +46,11 @@ STATIC PLATFORM_SERIAL_CONSOLE mSerialConsole = {
+   //
+   {
+     { MESSAGING_DEVICE_PATH, MSG_UART_DP, DP_NODE_LEN (UART_DEVICE_PATH) },
+-    0,                                      // Reserved
+-    FixedPcdGet64 (PcdUartDefaultBaudRate), // BaudRate
+-    FixedPcdGet8 (PcdUartDefaultDataBits),  // DataBits
+-    FixedPcdGet8 (PcdUartDefaultParity),    // Parity
+-    FixedPcdGet8 (PcdUartDefaultStopBits)   // StopBits
++    0, // Reserved
++    0, // BaudRate
++    0, // DataBits
++    0, // Parity
++    0  // StopBits
+   },
+ 
+   //
+@@ -247,6 +247,10 @@ PlatformBootManagerBeforeConsole (
+   EfiBootManagerGetBootManagerMenu (&BootOption);
+   EfiBootManagerAddKeyOptionVariable (NULL, (UINT16) BootOption.OptionNumber, 0, &Down, NULL);
+ 
++  mSerialConsole.Uart.BaudRate = PcdGet64 (PcdUartDefaultBaudRate);
++  mSerialConsole.Uart.DataBits = PcdGet8 (PcdUartDefaultDataBits);
++  mSerialConsole.Uart.Parity = PcdGet8 (PcdUartDefaultParity);
++  mSerialConsole.Uart.StopBits = PcdGet8 (PcdUartDefaultStopBits);
+   //
+   // Add the hardcoded serial console device path to ConIn, ConOut, ErrOut.
+   //
+-- 
+2.17.1
+

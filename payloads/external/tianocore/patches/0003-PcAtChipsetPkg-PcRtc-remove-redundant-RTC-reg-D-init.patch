@@ -1,0 +1,45 @@
+From edfb661c91394885f7f6c4d4835d226033d651b3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Wed, 4 Apr 2018 15:25:27 +0200
+Subject: [PATCH 3/9] PcAtChipsetPkg/PcRtc: remove redundant RTC reg D
+ initialization and clear all its bits except VRT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ CorebootPayloadPkg/CorebootPayloadPkg.dec          | 4 ----
+ PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcRtc.c | 2 +-
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/CorebootPayloadPkg/CorebootPayloadPkg.dec b/CorebootPayloadPkg/CorebootPayloadPkg.dec
+index 59a372e19c8f..a3fccbf02372 100644
+--- a/CorebootPayloadPkg/CorebootPayloadPkg.dec
++++ b/CorebootPayloadPkg/CorebootPayloadPkg.dec
+@@ -57,9 +57,5 @@
+   # @Prompt Initial value for Register_B in RTC.
+   gPcAtChipsetPkgTokenSpaceGuid.PcdInitialValueRtcRegisterB|0x02|UINT8|0x00000002
+ 
+-  ## Specifies the initial value for Register_D in RTC.
+-  # @Prompt Initial value for Register_D in RTC.
+-  gPcAtChipsetPkgTokenSpaceGuid.PcdInitialValueRtcRegisterD|0x00|UINT8|0x00000000
+-
+ [PcdsDynamic, PcdsDynamicEx]
+ 
+diff --git a/PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcRtc.c b/PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcRtc.c
+index f3f2bb08697e..523538ab4f77 100644
+--- a/PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcRtc.c
++++ b/PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcRtc.c
+@@ -146,7 +146,7 @@ PcRtcInit (
+   //
+   // Clear RTC register D - all bits except VRT (Valid RAM and Time)
+   //
+-  RegisterD.Data = FixedPcdGet8 (PcdInitialValueRtcRegisterD);
++  RegisterD.Data = RtcRead (RTC_ADDRESS_REGISTER_D);
+   RtcWrite (RTC_ADDRESS_REGISTER_D, RegisterD.Data & 0x80);
+ 
+   //
+-- 
+2.17.1
+

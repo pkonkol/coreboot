@@ -1,0 +1,39 @@
+From f99fd17127f407c9accf8e5021aed2b043d955ab Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Wed, 4 Apr 2018 14:55:17 +0200
+Subject: [PATCH 2/9] PcAtChipsetPkg: coorect initial PCD values for RTE
+ registers A,B and D
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ CorebootPayloadPkg/CorebootPayloadPkg.dec | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/CorebootPayloadPkg/CorebootPayloadPkg.dec b/CorebootPayloadPkg/CorebootPayloadPkg.dec
+index b33b79c1d6bd..59a372e19c8f 100644
+--- a/CorebootPayloadPkg/CorebootPayloadPkg.dec
++++ b/CorebootPayloadPkg/CorebootPayloadPkg.dec
+@@ -49,6 +49,17 @@
+ #
+ ################################################################################
+ [PcdsFixedAtBuild, PcdsPatchableInModule]
++  ## Specifies the initial value for Register_A in RTC.
++  # @Prompt Initial value for Register_A in RTC.
++  gPcAtChipsetPkgTokenSpaceGuid.PcdInitialValueRtcRegisterA|0x26|UINT8|0x00000006
++
++  ## Specifies the initial value for Register_B in RTC.
++  # @Prompt Initial value for Register_B in RTC.
++  gPcAtChipsetPkgTokenSpaceGuid.PcdInitialValueRtcRegisterB|0x02|UINT8|0x00000002
++
++  ## Specifies the initial value for Register_D in RTC.
++  # @Prompt Initial value for Register_D in RTC.
++  gPcAtChipsetPkgTokenSpaceGuid.PcdInitialValueRtcRegisterD|0x00|UINT8|0x00000000
+ 
+ [PcdsDynamic, PcdsDynamicEx]
+ 
+-- 
+2.17.1
+
