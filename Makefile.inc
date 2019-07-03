@@ -93,7 +93,7 @@ subdirs-y += $(wildcard src/soc/*/*) $(wildcard src/northbridge/*/*)
 subdirs-y += src/superio
 subdirs-y += $(wildcard src/drivers/*) $(wildcard src/drivers/*/*)
 subdirs-y += src/cpu src/vendorcode
-subdirs-y += util/cbfstool util/sconfig util/nvramtool util/pgtblgen
+subdirs-y += util/cbfstool util/sconfig util/nvramtool util/pgtblgen util/vpdtool
 subdirs-y += util/futility util/marvell util/bincfg util/supermicro
 subdirs-y += $(wildcard src/arch/*)
 subdirs-y += src/mainboard/$(MAINBOARDDIR)
@@ -496,9 +496,9 @@ ifeq ($(CONFIG_DEBUG_ADA_CODE),y)
 ADAFLAGS_common += -gnata
 endif
 
-additional-dirs := $(objutil)/cbfstool $(objutil)/ifdtool \
-		   $(objutil)/options $(objutil)/amdfwtool \
-		   $(objutil)/cbootimage
+additional-dirs := $(objutil)/cbfstool $(objutil)/romcc $(objutil)/ifdtool \
+		   $(objutil)/options $(objutil)/amdfwtool $(objutil)/vpdtool \
+		   $(objutil)/cbootimage $(objutil)/bimgtool
 
 export $(COREBOOT_EXPORTS)
 
@@ -569,6 +569,12 @@ $(IFDTOOL):
 	@printf "    Compile IFDTOOL\n"
 	+$(MAKE) -C $(top)/util/ifdtool
 	cp -a $(top)/util/ifdtool/ifdtool $@
+
+VPDTOOL:=$(objutil)/vpdtool/vpdtool
+$(VPDTOOL):
+	@printf "    Compile VPDTOOL\n"
+	+$(MAKE) -C $(top)/util/vpdtool
+	cp -a $(top)/util/vpdtool/vpdtool $@
 
 AMDFWTOOL:=$(objutil)/amdfwtool/amdfwtool
 $(AMDFWTOOL): $(top)/util/amdfwtool/amdfwtool.c
@@ -651,7 +657,7 @@ install-git-commit-clangfmt:
 include util/crossgcc/Makefile.inc
 
 .PHONY: tools
-tools: $(objutil)/kconfig/conf $(objutil)/kconfig/toada $(CBFSTOOL) $(objutil)/cbfstool/cbfs-compression-tool $(FMAPTOOL) $(RMODTOOL) $(IFWITOOL) $(objutil)/nvramtool/nvramtool $(objutil)/sconfig/sconfig $(IFDTOOL) $(CBOOTIMAGE) $(AMDFWTOOL) $(AMDCOMPRESS) $(FUTILITY) $(BINCFG) $(IFITTOOL) $(objutil)/supermicro/smcbiosinfo
+tools: $(objutil)/kconfig/conf $(objutil)/kconfig/toada $(CBFSTOOL) $(objutil)/cbfstool/cbfs-compression-tool $(FMAPTOOL) $(RMODTOOL) $(IFWITOOL) $(objutil)/nvramtool/nvramtool $(objutil)/sconfig/sconfig $(IFDTOOL) $(CBOOTIMAGE) $(AMDFWTOOL) $(AMDCOMPRESS) $(FUTILITY) $(BINCFG) $(IFITTOOL) $(VPDTOOL) $(objutil)/supermicro/smcbiosinfo
 
 ###########################################################################
 # Common recipes for all stages
@@ -1092,7 +1098,7 @@ else
 RAMSTAGE=
 endif
 
-$(obj)/coreboot.rom: $(obj)/coreboot.pre $(RAMSTAGE) $(CBFSTOOL) $$(INTERMEDIATE)
+$(obj)/coreboot.rom: $(obj)/coreboot.pre $(RAMSTAGE) $(CBFSTOOL) $(VPDTOOL) $$(INTERMEDIATE)
 
 	@printf "    CBFS       $(subst $(obj)/,,$(@))\n"
 # The full ROM may be larger than the CBFS part, so create an empty
