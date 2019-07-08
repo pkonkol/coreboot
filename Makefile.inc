@@ -1146,9 +1146,35 @@ endif
 	$(IFITTOOL) -f $@.tmp -D $(TS_OPTIONS) -r COREBOOT
 
 endif
-
 endif # !CONFIG_UPDATE_IMAGE
 endif # CONFIG_CPU_INTEL_FIRMWARE_INTERFACE_TABLE
+ifeq ($(CONFIG_VPD),y)
+	@printf "    VPDTOOL    Formatting VPD partitions\n"
+	$(VPDTOOL) -f $@.tmp -O -i RO_VPD
+	$(VPDTOOL) -f $@.tmp -O -i RW_VPD
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s scon=enabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s usben=enabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s com2_en=disabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s boosten=enabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s sd3mode=disabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s iommu=disabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s uartc=disabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s uartd=disabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s pxen=disabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s mpcie2clk=disabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s watchdog=0
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s scon=enabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s usben=enabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s com2_en=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s boosten=enabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s sd3mode=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s iommu=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s uartc=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s uartd=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s pxen=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s mpcie2clk=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s watchdog=0
+endif
 ifeq ($(CONFIG_AGESA_UCODE_EXPERIMENTAL),y)
 	dd if=$(CONFIG_CPU_UCODE_BINARIES) of=$@.tmp bs=1 seek=6665692 count=3424 conv=notrunc 2> /dev/null
 endif
