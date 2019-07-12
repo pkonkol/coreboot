@@ -13,6 +13,7 @@ MAKEOVERRIDES :=
 
 all: grub2
 
+<<<<<<< HEAD
 clone:
 	echo "    Cloning GRUB2 from Git"
 	git clone $(project_git_repo) $(project_dir)
@@ -33,6 +34,12 @@ endif
 
 checkout: fetch
 	echo "    Checking out GRUB2 revision $(TAG-y)"
+=======
+checkout:
+	echo "    GIT        GRUB2 $(NAME-y)"
+	test -d grub2 || \
+		git clone $(project_git_repo) $(project_dir)
+>>>>>>> payloads/external/GRUB2: fix building from scratch procedure
 	cd grub2; git checkout master; git branch -D coreboot 2>/dev/null; git checkout -b coreboot $(TAG-y)
 
 grub2/build/config.h: $(CONFIG_DEP) | checkout
