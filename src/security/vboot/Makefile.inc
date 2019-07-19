@@ -197,6 +197,7 @@ regions-for-file = $(subst $(spc),$(comma),$(sort \
 		rmu.bin \
 		cmos_layout.bin \
 		cmos.default \
+		linux/payload \
 		$(call strip_quotes,$(CONFIG_RO_REGION_ONLY)) \
 		,$(1)),COREBOOT,\
 		$(if $(filter \
