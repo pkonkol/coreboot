@@ -1157,7 +1157,7 @@ ifeq ($(CONFIG_USE_CPU_MICROCODE_CBFS_BINS),y)
 	$(TS_OPTIONS) -r COREBOOT
 endif
 	$(IFITTOOL) -f $@.tmp -D $(TS_OPTIONS) -r COREBOOT
-
+endif
 endif
 endif # !CONFIG_UPDATE_IMAGE
 endif # CONFIG_CPU_INTEL_FIRMWARE_INTERFACE_TABLE
@@ -1187,6 +1187,10 @@ ifeq ($(CONFIG_VPD),y)
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s pxen=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s mpcie2clk=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s watchdog=0
+ifneq ($(CONFIG_BOARD_PCENGINES_APU2),y)
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s ehcien=enabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s ehcien=enabled
+endif
 endif
 ifeq ($(CONFIG_AGESA_UCODE_EXPERIMENTAL),y)
 	dd if=$(CONFIG_CPU_UCODE_BINARIES) of=$@.tmp bs=1 seek=6665692 count=3424 conv=notrunc 2> /dev/null
