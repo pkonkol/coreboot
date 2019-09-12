@@ -27,6 +27,9 @@ ifeq ($(CONFIG_TIANOCORE_UEFIPAYLOAD),y)
 bootloader=UefiPayloadPkg
 build_flavor=-D BOOTLOADER=COREBOOT -D PCIE_BASE=$(CONFIG_MMCONF_BASE_ADDRESS)
 TAG=$(CONFIG_TIANOCORE_REVISION_ID)
+ifeq ($(CONFIG_TPM2),y)
+tpm_opts=-D TPM2_ENABLE=TRUE -D TPM2_CONFIG_ENABLE=TRUE
+endif
 else
 bootloader=CorebootPayloadPkg
 # STABLE revision is MrChromebox's coreboot framebuffer (coreboot_fb) branch
@@ -48,16 +51,17 @@ endif
 ifeq ($(CONFIG_TIANOCORE_TARGET_IA32), y)
 	BUILD_STR=-a IA32 -t COREBOOT -p $(bootloader)/$(bootloader)Ia32.dsc -b $(BUILD_TYPE) $(TIMER) $(build_flavor)
 else
-	BUILD_STR=-a IA32 -a X64 -t COREBOOT -p $(bootloader)/$(bootloader)Ia32X64.dsc -b $(BUILD_TYPE) $(TIMER) $(build_flavor)
+	BUILD_STR=-a IA32 -a X64 -t COREBOOT -p $(bootloader)/$(bootloader)Ia32X64.dsc -b $(BUILD_TYPE) $(TIMER) $(build_flavor) $(tpm_opts)
 endif
 
 all: clean build
 
 $(project_dir):
 	echo "    Cloning $(project_name) from Git"
-	git clone --branch $(project_git_branch) $(project_git_repo) $(project_dir); \
+	git clone --branch $(project_git_branch) --recurse-submodule $(project_git_repo) $(project_dir); \
 		cd $(project_dir); \
 		git remote add upstream $(upstream_git_repo)
+
 
 update: $(project_dir)
 	cd  $(project_dir); \
@@ -70,9 +74,10 @@ update: $(project_dir)
 		if git describe --all --dirty | grep -qv dirty; then \
 			echo "    Checking out $(project_name) revision $(TAG)"; \
 			git checkout --detach $(TAG); \
+			git submodule update --init --checkout; \
 		else \
 			echo "    Working directory not clean; will not overwrite"; \
-		fi
+		fi;
 
 checktools:
 	echo "Checking uuid-dev..."
