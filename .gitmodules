@@ -58,6 +58,6 @@
 	path = 3rdparty/stm
 	url = https://review.coreboot.org/STM
 	branch = stmpe
-[submodule "payload/external/landing-zone"]
-	path = payload/external/landing-zone
+[submodule "payloads/external/landing-zone"]
+	path = payloads/external/landing-zone
 	url = https://github.com/TrenchBoot/landing-zone
