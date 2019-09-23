@@ -300,8 +300,9 @@ void verstage_main(void)
 	}
 	timestamp_add_now(TS_END_TPMINIT);
 
-	if (get_recovery_mode_switch()) {
-		ctx->flags |= VB2_CONTEXT_FORCE_RECOVERY_MODE;
+	/* Boot to Recovery Mode if no RW slot present */
+	if (!CONFIG(VBOOT_SLOTS_RW_A) || get_recovery_mode_switch()) {
+		ctx.flags |= VB2_CONTEXT_FORCE_RECOVERY_MODE;
 		if (CONFIG(VBOOT_DISABLE_DEV_ON_RECOVERY))
 			ctx->flags |= VB2_CONTEXT_DISABLE_DEVELOPER_MODE;
 	}
