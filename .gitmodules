@@ -36,12 +36,7 @@
 	ignore = dirty
 [submodule "3rdparty/ffs"]
 	path = 3rdparty/ffs
-	url = https://review.coreboot.org/ffs.git
-[submodule "3rdparty/amd_blobs"]
-	path = 3rdparty/amd_blobs
-	url = https://review.coreboot.org/amd_blobs.git
-	update = none
-	ignore = dirty
-[submodule "payload/external/landing-zone"]
-	path = payload/external/landing-zone
+	url = https://github.com/coreboot/ffs.git
+[submodule "payloads/external/landing-zone"]
+	path = payloads/external/landing-zone
 	url = https://github.com/TrenchBoot/landing-zone
