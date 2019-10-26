@@ -39,4 +39,4 @@
 	url = https://github.com/coreboot/ffs.git
 [submodule "payloads/external/landing-zone"]
 	path = payloads/external/landing-zone
-	url = https://github.com/TrenchBoot/landing-zone
+	url = https://github.com/3mdeb/landing-zone.git
