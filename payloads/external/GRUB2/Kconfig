@@ -28,7 +28,7 @@ endchoice
 config GRUB2_REVISION_ID
 	string "Insert a commit's SHA-1 or a branch name"
 	depends on GRUB2_REVISION
-	default "origin/scratchpad_kh" if GRUB2_TRENCHBOOT_DRTM
+	default "origin/move_header" if GRUB2_TRENCHBOOT_DRTM
 	default "origin/master"
 	help
 	   The commit's SHA-1 or branch name of the revision to use.
