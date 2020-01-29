@@ -7,6 +7,8 @@
 #include <acpi/acpi_ivrs.h>
 #include <arch/ioapic.h>
 #include <types.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <device/device.h>
 #include <device/pci.h>
 #include <device/pci_ids.h>
@@ -437,6 +439,7 @@ static unsigned long acpi_fill_hest(acpi_hest_t *hest)
 
 unsigned long acpi_fill_ivrs_ioapic(acpi_ivrs_t *ivrs, unsigned long current)
 {
+<<<<<<< HEAD
 	/* 8-byte IVHD structures must be aligned to the 8-byte boundary. */
 	current = ALIGN_UP(current, 8);
 	ivrs_ivhd_special_t *ivhd_ioapic = (ivrs_ivhd_special_t *)current;
@@ -460,10 +463,46 @@ unsigned long acpi_fill_ivrs_ioapic(acpi_ivrs_t *ivrs, unsigned long current)
 	ivhd_ioapic->source_dev_id = PCI_DEVFN(0, 1);
 	ivhd_ioapic->variety = IVHD_SPECIAL_DEV_IOAPIC;
 	current += sizeof(ivrs_ivhd_special_t);
+=======
+	/*
+	 * FIXME: 8-byte IVHD structures seem to be aligned to the 8-byte
+	 * boundary in AGESA but IOMMU specification doesn't explicitly say to
+	 * do so. Only 4-byte IVHDs should be aligned to a 4-byte boundary
+	 */
+	unsigned long offset = ((current + 0x7) & (~ 0x7)) - current;
+	ivrs_ivhd_special_t *ivhd_ioapic =
+		(ivrs_ivhd_special_t *)(current + offset);
+
+	ivhd_ioapic->type = IVHD_SPECIAL_DEVICE;
+	ivhd_ioapic->reserved = 0x0000;
+	ivhd_ioapic->dte_setting = 0xd7; /* Allow all interrupts */
+	ivhd_ioapic->handle = CONFIG_MAX_CPUS; /* FCH IOAPIC ID */
+	ivhd_ioapic->source_dev_id = PCI_DEVFN(SMBUS_DEV, SMBUS_FUNC);
+	ivhd_ioapic->variety = IVHD_VARIETY_IOAPIC;
+	current += sizeof(ivrs_ivhd_special_t) + offset;
+	ivrs->ivhd.length += sizeof(ivrs_ivhd_special_t) + offset;
+
+	ivhd_ioapic = (ivrs_ivhd_special_t *)current;
+
+	ivhd_ioapic->type = IVHD_SPECIAL_DEVICE;
+	ivhd_ioapic->reserved = 0x0000;
+	ivhd_ioapic->dte_setting = 0x00;
+	ivhd_ioapic->handle = CONFIG_MAX_CPUS + 1; /* GNB IOAPIC ID */
+	/*
+	 * GNB IOAPIC on Root Complex.
+	 * This device ID is requested by IOMMU drivers on most systems
+	 * although it is not described in any documentation.
+	 */
+	ivhd_ioapic->source_dev_id = PCI_DEVFN(0, 1);
+	ivhd_ioapic->variety = IVHD_VARIETY_IOAPIC;
+	current += sizeof(ivrs_ivhd_special_t);
+	ivrs->ivhd.length += sizeof(ivrs_ivhd_special_t);
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 
 	return current;
 }
 
+<<<<<<< HEAD
 static unsigned long ivhd_describe_hpet(unsigned long current)
 {
 	/* 8-byte IVHD structures must be aligned to the 8-byte boundary. */
@@ -471,16 +510,37 @@ static unsigned long ivhd_describe_hpet(unsigned long current)
 	ivrs_ivhd_special_t *ivhd_hpet = (ivrs_ivhd_special_t *)current;
 
 	ivhd_hpet->type = IVHD_DEV_8_BYTE_EXT_SPECIAL_DEV;
+=======
+static unsigned long ivhd_describe_hpet(acpi_ivrs_t *ivrs, unsigned long current)
+{
+	/*
+	 * FIXME: 8-byte IVHD structures seem to be aligned to the 8-byte
+	 * boundary in AGESA but IOMMU specification doesn't explicitly say to
+	 * do so. Only 4-byte IVHDs should be aligned to a 4-byte boundary
+	 */
+	unsigned long offset = ((current + 0x7) & (~ 0x7)) - current;
+	ivrs_ivhd_special_t *ivhd_hpet =
+		 (ivrs_ivhd_special_t *)(current + offset);
+
+	ivhd_hpet->type = IVHD_SPECIAL_DEVICE;
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 	ivhd_hpet->reserved = 0x0000;
 	ivhd_hpet->dte_setting = 0x00;
 	ivhd_hpet->handle = 0x00;
 	ivhd_hpet->source_dev_id = PCI_DEVFN(SMBUS_DEV, SMBUS_FUNC);
+<<<<<<< HEAD
 	ivhd_hpet->variety = IVHD_SPECIAL_DEV_HPET;
 	current += sizeof(ivrs_ivhd_special_t);
+=======
+	ivhd_hpet->variety = IVHD_VARIETY_HPET;
+	current += sizeof(ivrs_ivhd_special_t) + offset;
+	ivrs->ivhd.length += sizeof(ivrs_ivhd_special_t) + offset;
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 
 	return current;
 }
 
+<<<<<<< HEAD
 static unsigned long ivhd_dev_range(unsigned long current, uint16_t start_devid,
 				    uint16_t end_devid, uint8_t setting)
 {
@@ -500,10 +560,34 @@ static unsigned long ivhd_dev_range(unsigned long current, uint16_t start_devid,
 	ivhd_range->dev_id = end_devid;
 	ivhd_range->dte_setting = setting;
 	current += sizeof(ivrs_ivhd_generic_t);
+=======
+static unsigned long ivhd_generic_range(acpi_ivrs_t *ivrs,
+					unsigned long current,
+					uint16_t start_devid,
+					uint16_t end_devid, uint8_t setting)
+{
+	ivrs_ivhd_generic_t *ivhd_range = (ivrs_ivhd_generic_t *)current;
+
+	/* create the start range IVHD entry */
+	ivhd_range->type = IVHD_GENERIC_START_OF_RANGE;
+	ivhd_range->dev_id = start_devid;
+	ivhd_range->dte_setting = setting;
+	current += sizeof (ivrs_ivhd_generic_t);
+	ivrs->ivhd.length += sizeof (ivrs_ivhd_generic_t);
+
+	/* create the end range IVHD entry */
+	ivhd_range = (ivrs_ivhd_generic_t *)current;
+	ivhd_range->type = IVHD_GENERIC_END_OF_RANGE;
+	ivhd_range->dev_id = end_devid;
+	ivhd_range->dte_setting = setting;
+	current += sizeof (ivrs_ivhd_generic_t);
+	ivrs->ivhd.length += sizeof (ivrs_ivhd_generic_t);
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 
 	return current;
 }
 
+<<<<<<< HEAD
 static unsigned long add_ivhd_dev_entry(struct device *parent, struct device *dev,
 					unsigned long *current, uint8_t type, uint8_t data)
 {
@@ -539,12 +623,55 @@ static void ivrs_add_device_or_bridge(struct device *parent, struct device *dev,
 {
 	unsigned int header_type, is_pcie;
 	unsigned long current_backup;
+=======
+static void add_ivhd_dev_entry(struct device *parent, struct device *dev,
+			       unsigned long *current, uint16_t *length,
+			       uint8_t type, uint8_t data)
+{
+	unsigned long offset;
+
+	if (type == IVHD_GENERIC_SELECT) {
+		offset = ((*current + 0x3) & (~ 0x3)) - *current;
+		ivrs_ivhd_generic_t *ivhd_entry = (ivrs_ivhd_generic_t *)(*current + offset);
+
+		ivhd_entry->type = type;
+		ivhd_entry->dev_id = dev->path.pci.devfn | (dev->bus->secondary << 8);
+		ivhd_entry->dte_setting = data;
+
+		*current += sizeof(ivrs_ivhd_generic_t) + offset;
+		*length  += sizeof(ivrs_ivhd_generic_t) + offset;
+		printk(BIOS_DEBUG, "IVHD type 2, devfn %d, bus %d \n", dev->path.pci.devfn, dev->bus->secondary);
+	} else if (type == IVHD_ALIAS_SELECT) {
+		offset = ((*current + 0x7) & (~ 0x7)) - *current;
+		ivrs_ivhd_alias_t *ivhd_entry = (ivrs_ivhd_alias_t *)(*current + offset);
+
+		ivhd_entry->type = type;
+		ivhd_entry->dev_id = dev->path.pci.devfn | (dev->bus->secondary << 8);
+		ivhd_entry->dte_setting = data;
+		ivhd_entry->reserved1 = 0;
+		ivhd_entry->reserved2 = 0;
+		ivhd_entry->source_dev_id = parent->path.pci.devfn | (parent->bus->secondary << 8);
+
+		*current += sizeof(ivrs_ivhd_alias_t) + offset;
+		*length  += sizeof(ivrs_ivhd_alias_t) + offset;
+		printk(BIOS_DEBUG, "IVHD type 42, devfn %d, bus %d ,"
+			" parent devfn %d, parent bus %d \n", dev->path.pci.devfn, dev->bus->secondary,
+			parent->path.pci.devfn, parent->bus->secondary);
+	}
+}
+
+static void ivrs_add_device_or_bridge(struct device *parent, struct device *dev,
+				      unsigned long *current, uint16_t *length)
+{
+	unsigned int header_type, is_pcie, dev_type;
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 
 	header_type = dev->hdr_type & 0x7f;
 	is_pcie = pci_find_capability(dev, PCI_CAP_ID_PCIE);
 
 	if (((header_type == PCI_HEADER_TYPE_NORMAL) ||
 	     (header_type == PCI_HEADER_TYPE_BRIDGE)) && is_pcie) {
+<<<<<<< HEAD
 		/* Device or Bridge is PCIe */
 		current_backup = *current;
 		add_ivhd_dev_entry(parent, dev, current, IVHD_DEV_4_BYTE_SELECT, 0x0);
@@ -554,6 +681,24 @@ static void ivrs_add_device_or_bridge(struct device *parent, struct device *dev,
 		current_backup = *current;
 		add_ivhd_dev_entry(parent, dev, current, IVHD_DEV_8_BYTE_ALIAS_SELECT, 0x0);
 		*ivhd_length += (*current - current_backup);
+=======
+		/* Device or Bridge is PCIe.
+		 * FIXME: if the endpoint is legacy, OS can configure
+		 * it for INTx use which breaks interrupt delivery for
+		 * this device when IOMMU is on and device is described
+		 * by type 2 entry. Such devices should be described by
+		 * type 0x42 alias entry and point to the upstream port
+		 * DeviceID as a source of bus transactions.
+		 */
+		dev_type = (pci_read_config16(dev, is_pcie + 2) & PCI_EXP_FLAGS_TYPE) >> 4;
+		if (dev_type & PCI_EXP_TYPE_LEG_END)
+			add_ivhd_dev_entry(parent, dev, current, length, IVHD_ALIAS_SELECT, 0x0);
+		else
+			add_ivhd_dev_entry(parent, dev, current, length, IVHD_GENERIC_SELECT, 0x0);
+	} else if ((header_type == PCI_HEADER_TYPE_NORMAL) && !is_pcie) {
+		/* Device is legacy PCI or PCI-X */
+		add_ivhd_dev_entry(parent, dev, current, length, IVHD_ALIAS_SELECT, 0x0);
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 	}
 }
 
@@ -576,14 +721,21 @@ static void add_ivhd_device_entries(struct device *parent, struct device *dev,
 			*root_level = depth;
 
 		if ((*root_level != -1) && (dev->enabled)) {
+<<<<<<< HEAD
 			if (depth != *root_level)
 				ivrs_add_device_or_bridge(parent, dev, current, ivhd_length);
+=======
+			if (depth != *root_level) {
+				ivrs_add_device_or_bridge(parent, dev, current, length);
+			}
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 		}
 	}
 
 	for (link = dev->link_list; link; link = link->next)
 		for (sibling = link->children; sibling; sibling =
 		     sibling->sibling)
+<<<<<<< HEAD
 			add_ivhd_device_entries(dev, sibling, depth + 1, depth, root_level,
 						current, ivhd_length);
 
@@ -656,6 +808,12 @@ static unsigned long acpi_fill_ivrs11(unsigned long current, acpi_ivrs_t *ivrs_a
 	ivhd_11->length += (current - current_backup);
 
 	return current;
+=======
+			add_ivhd_device_entries(dev, sibling, depth + 1, depth,
+						root_level, current, length);
+
+	free(root_level);
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 }
 
 static unsigned long acpi_fill_ivrs(acpi_ivrs_t *ivrs, unsigned long current)
@@ -671,6 +829,7 @@ static unsigned long acpi_fill_ivrs(acpi_ivrs_t *ivrs, unsigned long current)
 		return (unsigned long)ivrs;
 	}
 
+<<<<<<< HEAD
 	struct device *iommu_dev = pcidev_on_root(0, 2);
 
 	if (!iommu_dev) {
@@ -683,6 +842,14 @@ static unsigned long acpi_fill_ivrs(acpi_ivrs_t *ivrs, unsigned long current)
 	if (ivrs_agesa != NULL) {
 		ivrs->iv_info = ivrs_agesa->iv_info;
 		ivrs->ivhd.type = IVHD_BLOCK_TYPE_LEGACY__FIXED;
+=======
+	/* obtain IOMMU base address */
+	ivrs_agesa = agesawrapper_getlateinitptr(PICK_IVRS);
+	if (ivrs_agesa != NULL) {
+		/* Enable EFR */
+		ivrs->iv_info = ivrs_agesa->iv_info | 1;
+		ivrs->ivhd.type = 0x10;
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 		ivrs->ivhd.flags = ivrs_agesa->ivhd.flags;
 		ivrs->ivhd.length = sizeof(struct acpi_ivrs_ivhd);
 		/* BDF <bus>:00.2 */
@@ -693,10 +860,15 @@ static unsigned long acpi_fill_ivrs(acpi_ivrs_t *ivrs, unsigned long current)
 		ivrs->ivhd.iommu_base_high = ivrs_agesa->ivhd.iommu_base_high;
 		ivrs->ivhd.pci_segment_group = 0x0000;
 		ivrs->ivhd.iommu_info = ivrs_agesa->ivhd.iommu_info;
+<<<<<<< HEAD
 		ivrs->ivhd.iommu_feature_info = ivrs_agesa->ivhd.iommu_feature_info;
 		/* Enable EFR if supported */
 		if (pci_read_config32(iommu_dev, ivrs->ivhd.capability_offset) & EFR_SUPPORT)
 			ivrs->iv_info |= IVINFO_EFR_SUPPORTED;
+=======
+		ivrs->ivhd.iommu_feature_info =
+			ivrs_agesa->ivhd.iommu_feature_info;
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 	} else {
 		printk(BIOS_WARNING, "%s: AGESA returned NULL IVRS\n", __func__);
 
@@ -708,6 +880,7 @@ static unsigned long acpi_fill_ivrs(acpi_ivrs_t *ivrs, unsigned long current)
 	 * processed by IOMMU. Start with device 00:01.0 since IOMMU does not
 	 * translate transactions generated by itself.
 	 */
+<<<<<<< HEAD
 	current_backup = current;
 	current = ivhd_dev_range(current, PCI_DEVFN(1, 0), PCI_DEVFN(0x1f, 6), 0);
 	ivrs->ivhd.length += (current - current_backup);
@@ -717,11 +890,26 @@ static unsigned long acpi_fill_ivrs(acpi_ivrs_t *ivrs, unsigned long current)
 	current_backup = current;
 	current = ivhd_describe_hpet(current);
 	ivrs->ivhd.length += (current - current_backup);
+=======
+	current = ivhd_generic_range(ivrs, current, PCI_DEVFN(1, 0),
+				     PCI_DEVFN(0x1f, 7), 0);
+
+	/* Describe PCI devices */
+	add_ivhd_device_entries(NULL, all_devices, 0, -1, NULL, &current,
+				&ivrs->ivhd.length);
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
+
+	/* Describe HPET */
+	current = ivhd_describe_hpet(ivrs, current);
 
 	/* Describe IOAPICs */
+<<<<<<< HEAD
 	current_backup = current;
 	current = acpi_fill_ivrs_ioapic(ivrs_agesa, current);
 	ivrs->ivhd.length += (current - current_backup);
+=======
+	current = acpi_fill_ivrs_ioapic(ivrs, current);
+>>>>>>> 99629626a4... nb/amd/pi/00730F01/northbridge: refactor IVRS
 
 	/* If EFR is not supported, IVHD type 11h is reserved */
 	if (!(ivrs->iv_info & IVINFO_EFR_SUPPORTED))
