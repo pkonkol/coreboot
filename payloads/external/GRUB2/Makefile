@@ -24,7 +24,6 @@ else
 	echo "WARNING: index/tree not clean, skipping update / force checkout."
 	echo "         Checkout manually with "\
 	     "\`git -C payloads/external/GRUB2/$(project_dir) checkout -f\`."
-endif
 
 grub2/build/config.h: $(CONFIG_DEP) | checkout
 	echo "    CONFIG     GRUB2 $(NAME-y)"
