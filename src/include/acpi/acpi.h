@@ -276,9 +276,6 @@ typedef struct acpi_vfct {
 	acpi_vfct_image_hdr_t image_hdr;
 } __packed acpi_vfct_t;
 
-typedef struct acpi_ivrs_info {
-} __packed acpi_ivrs_info_t;
-
 /* IVRS IVHD (I/O Virtualization Hardware Definition Block) Type 10h */
 typedef struct acpi_ivrs_ivhd {
 	uint8_t type;
@@ -286,15 +283,44 @@ typedef struct acpi_ivrs_ivhd {
 	uint16_t length;
 	uint16_t device_id;
 	uint16_t capability_offset;
-	uint32_t iommu_base_low;
-	uint32_t iommu_base_high;
+	uint32_t iommu_base_lo;
+	uint32_t iommu_base_hi;
 	uint16_t pci_segment_group;
 	uint16_t iommu_info;
 	uint32_t iommu_feature_info;
 	uint8_t entry[0];
 } __packed acpi_ivrs_ivhd_t;
 
-/* IVRS (I/O Virtualization Reporting Structure) Type 10h */
+/* IVHD Type 11h IOMMU Attributes */
+
+typedef struct ivhd11_iommu_attr {
+	uint32_t reserved1 : 13;
+	uint32_t perf_counters : 4;
+	uint32_t perf_counter_banks : 6;
+	uint32_t msi_num_ppr : 5;
+	uint32_t reserved2 : 4;
+} __packed ivhd11_iommu_attr_t;
+
+/* IVRS IVHD (I/O Virtualization Hardware Definition Block) Type 11h */
+typedef struct acpi_ivrs_ivhd_11 {
+	uint8_t type;
+	uint8_t flags;
+	uint16_t length;
+	uint16_t device_id;
+	uint16_t capability_offset;
+	uint32_t iommu_base_lo;
+	uint32_t iommu_base_hi;
+	uint16_t pci_segment_group;
+	uint16_t iommu_info;
+	struct ivhd11_iommu_attr iommu_attributes;
+	uint32_t efr_reg_image_lo;
+	uint32_t efr_reg_image_hi;
+	uint32_t reserved[2];
+	uint8_t entry[0];
+} __packed acpi_ivrs_ivhd11_t;
+
+
+/* IVRS (I/O Virtualization Reporting Structure) */
 typedef struct acpi_ivrs {
 	acpi_header_t header;
 	uint32_t iv_info;
