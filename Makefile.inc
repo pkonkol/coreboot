@@ -1187,9 +1187,9 @@ ifeq ($(CONFIG_VPD),y)
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s pxen=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s mpcie2clk=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s watchdog=0
-ifneq ($(CONFIG_BOARD_PCENGINES_APU2),y)
-	$(VPDTOOL) -f $@.tmp -i RO_VPD -s ehcien=enabled
-	$(VPDTOOL) -f $@.tmp -i RW_VPD -s ehcien=enabled
+ifeq ($(CONFIG_BOARD_PCENGINES_APU2),y)
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s ehcien=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s ehcien=disabled
 endif
 endif
 ifeq ($(CONFIG_AGESA_UCODE_EXPERIMENTAL),y)
