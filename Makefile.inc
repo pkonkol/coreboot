@@ -1165,6 +1165,7 @@ ifeq ($(CONFIG_VPD),y)
 	@printf "    VPDTOOL    Formatting VPD partitions\n"
 	$(VPDTOOL) -f $@.tmp -O -i RO_VPD
 	$(VPDTOOL) -f $@.tmp -O -i RW_VPD
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s pxen=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s scon=enabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s usben=enabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s com2en=disabled
@@ -1174,9 +1175,9 @@ ifeq ($(CONFIG_VPD),y)
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s uartc=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s uartd=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s mpcie2_clk=disabled
-	$(VPDTOOL) -f $@.tmp -i RO_VPD -s pxen=disabled
-	$(VPDTOOL) -f $@.tmp -i RO_VPD -s mpcie2clk=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s watchdog=0
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s ehcien=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s pxen=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s scon=enabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s usben=enabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s com2en=disabled
@@ -1186,13 +1187,8 @@ ifeq ($(CONFIG_VPD),y)
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s uartc=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s uartd=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s mpcie2_clk=disabled
-	$(VPDTOOL) -f $@.tmp -i RW_VPD -s pxen=disabled
-	$(VPDTOOL) -f $@.tmp -i RW_VPD -s mpcie2clk=disabled
-	$(VPDTOOL) -f $@.tmp -i RW_VPD -s watchdog=0
-ifeq ($(CONFIG_BOARD_PCENGINES_APU2),y)
-	$(VPDTOOL) -f $@.tmp -i RO_VPD -s ehcien=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s ehcien=disabled
-endif
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s watchdog=0
 endif
 ifeq ($(CONFIG_AGESA_UCODE_EXPERIMENTAL),y)
 	dd if=$(CONFIG_CPU_UCODE_BINARIES) of=$@.tmp bs=1 seek=6665692 count=3424 conv=notrunc 2> /dev/null
