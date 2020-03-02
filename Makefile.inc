@@ -1173,6 +1173,7 @@ ifeq ($(CONFIG_VPD),y)
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s iommu=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s uartc=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s uartd=disabled
+	$(VPDTOOL) -f $@.tmp -i RO_VPD -s mpcie2_clk=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s pxen=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s mpcie2clk=disabled
 	$(VPDTOOL) -f $@.tmp -i RO_VPD -s watchdog=0
@@ -1184,6 +1185,7 @@ ifeq ($(CONFIG_VPD),y)
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s iommu=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s uartc=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s uartd=disabled
+	$(VPDTOOL) -f $@.tmp -i RW_VPD -s mpcie2_clk=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s pxen=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s mpcie2clk=disabled
 	$(VPDTOOL) -f $@.tmp -i RW_VPD -s watchdog=0
