@@ -28,24 +28,24 @@ ifeq ($(SORTBOOTORDER_REVISION),y)
 endif
 	false
 endif
-	cd sortbootorder; git show $(TAG-y) >/dev/null 2>&1 ; \
+	cd $(project_dir); git show $(TAG-y) >/dev/null 2>&1 ; \
 		if [ $$? -ne 0 ] || [ "$(TAG-y)" = "origin/master" ]; then \
 		echo "    Fetching new commits from the sortbootorder repo"; \
 		git fetch; fi
 
 checkout: fetch
 	echo "    Checking out sortbootorder revision $(TAG-y)"
-	cd sortbootorder; git checkout master; git branch -D coreboot 2>/dev/null; git checkout -b coreboot $(TAG-y)
+	cd $(project_dir); git checkout master; git branch -D coreboot 2>/dev/null; git checkout -b coreboot $(TAG-y)
 
 build: checkout
 	echo "    MAKE       sortbootorder"
-	$(MAKE) -C sortbootorder VERSION=$(TAG-y) APU1=$(TARGET_APU1)
+	$(MAKE) -C $(project_dir) VERSION=$(TAG-y) APU1=$(TARGET_APU1)
 
 clean:
-	test -d sortbootorder && $(MAKE) -C sortbootorder clean || exit 0
+	test -d $(project_dir) && $(MAKE) -C $(project_dir) clean || exit 0
 
 distclean:
-	rm -rf sortbootorder
+	rm -rf $(project_dir)
 
 print-repo-info:
 	echo "$(project_git_repo) $(project_dir)"
