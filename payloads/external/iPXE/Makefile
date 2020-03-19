@@ -19,10 +19,15 @@ STABLE_COMMIT_ID=ebf2eaf515e46abd43bc798e7e4ba77bfe529218
 
 TAG-$(CONFIG_IPXE_MASTER)=origin/master
 TAG-$(CONFIG_IPXE_STABLE)=$(STABLE_COMMIT_ID)
+TAG-$(CONFIG_IPXE_LZ)=origin/landing_zone
 
 project_name=iPXE
 project_dir=ipxe
+ifeq ($(CONFIG_IPXE_LZ),y)
+project_git_repo=https://github.com/3mdeb/ipxe.git
+else
 project_git_repo=https://git.ipxe.org/ipxe.git
+endif
 
 unexport KCONFIG_AUTOHEADER
 unexport KCONFIG_AUTOCONFIG
