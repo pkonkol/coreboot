@@ -45,6 +45,11 @@ config IPXE_MASTER
 	help
 	  Newest iPXE version.
 
+config IPXE_LZ
+	bool "landing_zone"
+	help
+	  iPXE with support for TrenchBoot's Landing Zone.
+
 endchoice
 
 config PXE_ROM_FILE
