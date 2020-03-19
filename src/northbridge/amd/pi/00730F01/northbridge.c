@@ -869,7 +869,6 @@ static unsigned long agesa_write_acpi_tables(const struct device *device,
 		ivrs = (acpi_ivrs_t *)current;
 		acpi_create_ivrs(ivrs, acpi_fill_ivrs);
 		current += ivrs->header.length;
-		hexdump((void *)ivrs, ivrs->header.length);
 		acpi_add_table(rsdp, ivrs);
 	}
 
