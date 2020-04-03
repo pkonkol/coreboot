@@ -109,11 +109,13 @@ payloads/external/SeaBIOS/seabios/.config: payloads/external/SeaBIOS/seabios/out
 payloads/external/SeaBIOS/seabios/out/autoversion.h: payloads/external/SeaBIOS/seabios/out/bios.bin.elf
 
 # add a SeaBIOS bootorder file
+ifneq ($(CONFIG_SEABIOS_BOOTORDER_IN_FMAP),y)
 ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
 cbfs-files-y += bootorder
 bootorder-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_FILE))
 bootorder-type := raw
 bootorder-align := 0x1000
+endif
 endif
 
 # add a SeaBIOS bootorder_map file
