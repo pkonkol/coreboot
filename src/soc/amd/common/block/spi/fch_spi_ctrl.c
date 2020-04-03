@@ -14,8 +14,6 @@
 
 #include <console/console.h>
 #include <spi_flash.h>
-#include <soc/southbridge.h>
-#include <soc/pci_devs.h>
 #include <amdblocks/lpc.h>
 #include <device/pci_ops.h>
 #include <lib.h>
@@ -23,11 +21,27 @@
 
 #define GRANULARITY_TEST_4k		0x0000f000		/* bits 15-12 */
 #define WORD_TO_DWORD_UPPER(x)		((x << 16) & 0xffff0000)
-
 /* SPI MMIO registers */
+#define SPI_CNTRL0			0x00
+#define   SPI_BUSY			BIT(31)
+#define   SPI_READ_MODE_MASK		(BIT(30) | BIT(29) | BIT(18))
+/* Nominal is 16.7MHz on older devices, 33MHz on newer */
+#define   SPI_READ_MODE_NOM		0x00000000
+#define   SPI_READ_MODE_DUAL112		(          BIT(29)          )
+#define   SPI_READ_MODE_QUAD114		(          BIT(29) | BIT(18))
+#define   SPI_READ_MODE_DUAL122		(BIT(30)                    )
+#define   SPI_READ_MODE_QUAD144		(BIT(30) |           BIT(18))
+#define   SPI_READ_MODE_NORMAL66	(BIT(30) | BIT(29)          )
+#define   SPI_READ_MODE_FAST		(BIT(30) | BIT(29) | BIT(18))
+#define   SPI_ACCESS_MAC_ROM_EN		BIT(22)
+#define   SPI_FIFO_PTR_CLR		BIT(20)
+#define   SPI_ARB_ENABLE		BIT(19)
+#define   EXEC_OPCODE			BIT(16)
 #define SPI_RESTRICTED_CMD1		0x04
 #define SPI_RESTRICTED_CMD2		0x08
 #define SPI_CNTRL1			0x0c
+#define SPI100_HOST_PREF_CONFIG		0x2c
+#define   SPI_RD4DW_EN_HOST		BIT(15)
 #define SPI_CMD_CODE			0x45
 #define SPI_CMD_TRIGGER			0x47
 #define   SPI_CMD_TRIGGER_EXECUTE	BIT(7)
@@ -40,6 +54,8 @@
 #define   SPI_FIFO_WR_PTR_MASK		0x7f
 #define   SPI_FIFO_RD_PTR_SHIFT		16
 #define   SPI_FIFO_RD_PTR_MASK		0x7f
+#define SPI_FIFO			0x80
+#define   SPI_FIFO_DEPTH		(0xc7 - SPI_FIFO)
 
 static uint32_t spibar;
 
@@ -122,7 +138,8 @@ static int execute_command(void)
 
 void spi_init(void)
 {
-	spibar = lpc_get_spibase();
+	spibar = pci_read_config32(SOC_LPC_DEV, SPIROM_BASE_ADDRESS_REGISTER);
+	spibar = ALIGN_DOWN(spibar, SPI_BASE_ALIGNMENT);
 	printk(BIOS_DEBUG, "%s: Spibar at 0x%08x\n", __func__, spibar);
 }
 
