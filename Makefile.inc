@@ -1165,7 +1165,7 @@ ifeq ($(CONFIG_VPD),y)
 	$(VPDTOOL) -f $@.tmp -O -i RO_VPD
 	$(VPDTOOL) -f $@.tmp -O -i RW_VPD
 ifneq ($(CONFIG_VPD_CONFIG_FILE),)
-	$(eval vpdconfig-file=$(shell cat (call strip_quotes,$(CONFIG_VPD_CONFIG_FILE))))
+	$(eval vpdconfig-file=$(shell cat $(call strip_quotes,$(CONFIG_VPD_CONFIG_FILE))))
 	for option in $(vpdconfig-file); do \
 		$(VPDTOOL) -f $@.tmp -i RW_VPD -s $$option; \
 		$(VPDTOOL) -f $@.tmp -i RO_VPD -s $$option; \
