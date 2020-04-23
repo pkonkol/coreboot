@@ -126,6 +126,8 @@ util/vgabios/testbios
 util/autoport/autoport
 util/kbc1126/kbc1126_ec_dump
 util/kbc1126/kbc1126_ec_insert
+util/vpdtool/vpdtool
+util/vpdtool/vpdtool_st
 
 Documentation/*.aux
 Documentation/*.idx
