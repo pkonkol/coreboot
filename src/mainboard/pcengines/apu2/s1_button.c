@@ -210,7 +210,7 @@ void enable_console(void)
 	       output_buffer + 0x600 + sizeof(struct google_vpd_info),
 	       info.size);
 
-	if (fmap_overwrite_area("RW_VPD", output_buffer, vpd_region.size) == -1)
+	if (fmap_overwrite_area("RW_VPD", output_buffer, vpd_region.size) != vpd_region.size)
 		printk(BIOS_ERR, "Flashing VPD failed\n");
 
 	free(vpd_buffer);
