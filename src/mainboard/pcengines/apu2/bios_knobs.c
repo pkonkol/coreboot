@@ -204,7 +204,7 @@ u8 check_mpcie2_clk(void)
 	//
 	// Find the mPCIe2 clock item
 	//
-	mpcie2_clk = is_knob_enabled("mpcie2_clk");
+	mpcie2_clk = is_knob_enabled("mpcie2clk");
 
 	switch (mpcie2_clk) {
 	case 0:
