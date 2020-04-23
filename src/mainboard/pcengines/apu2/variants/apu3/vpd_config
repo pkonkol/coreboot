@@ -9,4 +9,4 @@ boosten=enabled
 sd3mode=disabled
 iommu=disabled
 watchdog=0
-ehcien=disabled
+ehcien=enabled
