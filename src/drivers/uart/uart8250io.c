@@ -109,7 +109,9 @@ void uart_init(int idx)
 		unsigned int div;
 		div = uart_baudrate_divisor(get_uart_baudrate(),
 			uart_platform_refclk(), uart_input_clock_divider());
-		if (check_com2())
+		if (idx == 1)
+			port_index = 1;
+		else if (check_com2())
 			port_index = 1;
 		else
 			port_index = idx;
