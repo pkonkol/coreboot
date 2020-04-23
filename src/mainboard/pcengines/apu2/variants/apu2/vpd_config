@@ -1,10 +1,10 @@
 pxen=disabled
 scon=enabled
 usben=enabled
-uartc=disabled
-uartd=disabled
+uartc=enabled
+uartd=enabled
 com2en=disabled
-mpcie2_clk=disabled
+mpcie2clk=disabled
 boosten=enabled
 sd3mode=disabled
 iommu=disabled

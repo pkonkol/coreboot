@@ -1,9 +1,9 @@
 pxen=disabled
 scon=enabled
 usben=enabled
-uartc=disabled
-uartd=disabled
-mpcie2_clk=disabled
+uartc=enabled
+uartd=enabled
+mpcie2clk=disabled
 boosten=enabled
 iommu=disabled
 watchdog=0

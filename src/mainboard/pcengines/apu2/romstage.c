@@ -205,16 +205,8 @@ static void lpc_mcu_msg(void)
 		timeout = 10;
 		while (sync_byte != 0xe1) {
 			sync_byte = uart_rx_byte(1);
-			if (timeout == 0) {
-				uart_init(CONFIG_UART_FOR_CONSOLE);
-				udelay(10000);
-				printk(BIOS_ERR, "Failed to sync with LPC"
-				       " MCU, number of retries %d\n", 3 - i);
-				udelay(10000);
-				uart_init(1);
-				udelay(10000);
+			if (timeout == 0)
 				break;
-			}
 			udelay(100);
 			timeout--;
 		}
@@ -222,8 +214,11 @@ static void lpc_mcu_msg(void)
 			break;
 	}
 
-	if (sync_byte != 0xe1)
+	if (sync_byte != 0xe1) {
+		uart_init(CONFIG_UART_FOR_CONSOLE);
+		printk(BIOS_ERR, "Failed to sync with LPC MCU\n");
 		return;
+	}
 
 	uart_init(1);
 	timeout = 10;
