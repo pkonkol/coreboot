@@ -16,3 +16,10 @@ config VPD
 	default n
 	help
 	  Enable support for flash based vital product data.
+
+config VPD_CONFIG_FILE
+	string "Path to the VPD key-value pair list"
+	depends on VPD
+	help
+	  Provides a list of key-value pair to format the VPD regions at build
+	  time.

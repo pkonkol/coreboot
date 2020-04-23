@@ -1158,20 +1158,19 @@ ifeq ($(CONFIG_USE_CPU_MICROCODE_CBFS_BINS),y)
 endif
 	$(IFITTOOL) -f $@.tmp -D $(TS_OPTIONS) -r COREBOOT
 endif
-endif
 endif # !CONFIG_UPDATE_IMAGE
 endif # CONFIG_CPU_INTEL_FIRMWARE_INTERFACE_TABLE
 ifeq ($(CONFIG_VPD),y)
 	@printf "    VPDTOOL    Formatting VPD partitions\n"
 	$(VPDTOOL) -f $@.tmp -O -i RO_VPD
 	$(VPDTOOL) -f $@.tmp -O -i RW_VPD
-ifneq ($(CONFIG_BOARD_PCENGINES_APU1),y)
-	$(eval vpdconfig-file=$(shell cat $(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(VARIANT_DIR)/vpd_config))
-endif
+ifneq ($(CONFIG_VPD_CONFIG_FILE),)
+	$(eval vpdconfig-file=$(shell cat (call strip_quotes,$(CONFIG_VPD_CONFIG_FILE))))
 	for option in $(vpdconfig-file); do \
 		$(VPDTOOL) -f $@.tmp -i RW_VPD -s $$option; \
 		$(VPDTOOL) -f $@.tmp -i RO_VPD -s $$option; \
 	done
+endif
 endif
 ifeq ($(CONFIG_AGESA_UCODE_EXPERIMENTAL),y)
 	dd if=$(CONFIG_CPU_UCODE_BINARIES) of=$@.tmp bs=1 seek=6665692 count=3424 conv=notrunc 2> /dev/null
