@@ -84,7 +84,6 @@ check_dependencies:
     - curl -u ${UPLOADER_USERNAME}:${UPLOADER_PASSWORD} -X MKCOL "${UPLOADER_URL}/releases/${CI_COMMIT_REF_NAME}/"
     - curl --fail -u ${UPLOADER_USERNAME}:${UPLOADER_PASSWORD} -T ${RELEASE_DIR}/${PLATFORM}_${CI_COMMIT_REF_NAME}.rom ${UPLOADER_URL}/releases/${CI_COMMIT_REF_NAME}/
     - curl --fail -u ${UPLOADER_USERNAME}:${UPLOADER_PASSWORD} -T ${RELEASE_DIR}/${PLATFORM}_${CI_COMMIT_REF_NAME}.SHA256 ${UPLOADER_URL}/releases/${CI_COMMIT_REF_NAME}/
-
   only:
     - tags
 
@@ -112,6 +111,10 @@ check_dependencies:
     - bash -x .gitlab-ci/regression.sh
   only:
     - tags
+  artifacts:
+    name: ${PLATFORM}
+    paths:
+      - ${RELEASE_DIR}/open-firmware-rte/${PLATFORM}-logs.zip
 
 
 build:apu2:
