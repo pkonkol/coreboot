@@ -81,6 +81,11 @@ config TIANOCORE_USE_8254_TIMER
 	help
 	  Use 8254 Timer for legacy support.
 
+config TIANOCORE_SECURE_BOOT
+	bool "Tianocore enable UEFI Secure Boot"
+	help
+	  Use UEFI Secure Boot in Tianocore payload.
+
 config TIANOCORE_BOOTSPLASH_IMAGE
 	bool "Use a custom bootsplash image"
 	help
