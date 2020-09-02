@@ -164,10 +164,6 @@ payloads/external/depthcharge/depthcharge/build/depthcharge.elf depthcharge: $(D
 
 # Tianocore
 
-ifeq ($(CONFIG_TIANOCORE_NETWORK_IPXE),y)
-IPXE_EFI=ipxe-efi
-endif
-
 payloads/external/tianocore/tianocore/Build/UEFIPAYLOAD.fd tianocore: $(DOTCONFIG)
 	$(MAKE) -C payloads/external/tianocore all \
 		HOSTCC="$(HOSTCC)" \
