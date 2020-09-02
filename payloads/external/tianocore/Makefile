@@ -45,7 +45,7 @@ SECUREBOOT=-DSECURE_BOOT_ENABLE
 endif
 
 ifeq ($(CONFIG_TIANOCORE_NETWORK_IPXE), y)
-NETWORKIPXE=-DNETWORK_IPXE
+NETWORKIPXE=-DNETWORK_IPXE -DNETWORK_ALLOW_HTTP_CONNECTIONS
 endif
 
 ifeq ($(CONFIG_TIANOCORE_SERIAL_TERMINAL), y)
@@ -55,7 +55,7 @@ endif
 ifeq ($(CONFIG_TIANOCORE_TARGET_IA32), y)
 	BUILD_STR=-q -a IA32 -t COREBOOT -p $(bootloader)/$(bootloader)Ia32.dsc -b $(BUILD_TYPE) $(TIMER) $(build_flavor)
 else
-	BUILD_STR=-a IA32 -a X64 -t COREBOOT -p $(bootloader)/$(bootloader)Ia32X64.dsc -b $(BUILD_TYPE) $(TIMER) $(SECUREBOOT) $(build_flavor) $(tpm_opts) $(NETWORKIPXE) $(SERIALTERMINAL)
+	BUILD_STR=-q -a IA32 -a X64 -t COREBOOT -p $(bootloader)/$(bootloader)Ia32X64.dsc -b $(BUILD_TYPE) $(TIMER) $(SECUREBOOT) $(build_flavor) $(tpm_opts) $(NETWORKIPXE) $(SERIALTERMINAL)
 endif
 
 all: clean build
