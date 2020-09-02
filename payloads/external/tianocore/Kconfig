@@ -86,6 +86,16 @@ config TIANOCORE_SECURE_BOOT
 	help
 	  Use UEFI Secure Boot in Tianocore payload.
 
+config TIANOCORE_NETWORK_IPXE
+	bool "Tianocore iPXE support"
+	help
+	  Add iXPE to Tianocore payload
+
+config TIANOCORE_SERIAL_TERMINAL
+	bool "Tianocore serial terminal support"
+	help
+	  "Tianocore enable serial terminal support"
+
 config TIANOCORE_BOOTSPLASH_IMAGE
 	bool "Use a custom bootsplash image"
 	help

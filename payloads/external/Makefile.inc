@@ -164,6 +164,10 @@ payloads/external/depthcharge/depthcharge/build/depthcharge.elf depthcharge: $(D
 
 # Tianocore
 
+ifeq ($(CONFIG_TIANOCORE_NETWORK_IPXE),y)
+IPXE_EFI=ipxe-efi
+endif
+
 payloads/external/tianocore/tianocore/Build/UEFIPAYLOAD.fd tianocore: $(DOTCONFIG)
 	$(MAKE) -C payloads/external/tianocore all \
 		HOSTCC="$(HOSTCC)" \
@@ -178,6 +182,8 @@ payloads/external/tianocore/tianocore/Build/UEFIPAYLOAD.fd tianocore: $(DOTCONFI
 		CONFIG_MMCONF_BASE_ADDRESS=$(CONFIG_MMCONF_BASE_ADDRESS) \
 		CONFIG_TPM2=$(CONFIG_TPM2) \
 		CONFIG_TIANOCORE_SECURE_BOOT=$(CONFIG_TIANOCORE_SECURE_BOOT) \
+		CONFIG_TIANOCORE_NETWORK_IPXE=$(CONFIG_TIANOCORE_NETWORK_IPXE) \
+		CONFIG_TIANOCORE_SERIAL_TERMINAL=$(CONFIG_TIANOCORE_SERIAL_TERMINAL) \
 		GCC_CC_x86_32=$(GCC_CC_x86_32) \
 		GCC_CC_x86_64=$(GCC_CC_x86_64) \
 		GCC_CC_arm=$(GCC_CC_arm) \
