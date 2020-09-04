@@ -12,13 +12,14 @@
 #include <cpu/x86/lapic.h>
 #include <cpu/cpu.h>
 #include <cpu/x86/cache.h>
+#include <smp/node.h>
 
 static void model_16_init(struct device *dev)
 {
 	printk(BIOS_DEBUG, "Model 16 Init.\n");
 
 	u8 i;
-	msr_t msr;
+	msr_t msr, base, mask;
 	int num_banks;
 	int msrno;
 #if CONFIG(LOGICAL_CPUS)
@@ -42,6 +43,28 @@ static void model_16_init(struct device *dev)
 	wrmsr(MTRR_FIX_16K_80000, msr);
 	for (msrno = MTRR_FIX_4K_C0000; msrno <= MTRR_FIX_4K_F8000; msrno++)
 		wrmsr(msrno, msr);
+
+	/*
+	 * FIXME: postcar frame changes the MTRR order on BSP and these chanegs
+	 * are not reflected on APs.
+	 */
+	if (!boot_cpu()) {
+		mask = rdmsr(MTRR_PHYS_MASK(0));
+		base = rdmsr(MTRR_PHYS_BASE(0));
+		msr.lo = 0;
+		msr.hi = 0;
+		wrmsr(MTRR_PHYS_MASK(1), msr);
+		wrmsr(MTRR_PHYS_BASE(1), base);
+		wrmsr(MTRR_PHYS_MASK(1), mask);
+
+		mask = rdmsr(MTRR_PHYS_MASK(6));
+		base = rdmsr(MTRR_PHYS_BASE(6));
+		wrmsr(MTRR_PHYS_MASK(0), msr);
+		wrmsr(MTRR_PHYS_BASE(0), base);
+		wrmsr(MTRR_PHYS_MASK(0), mask);
+		wrmsr(MTRR_PHYS_MASK(6), msr);
+		wrmsr(MTRR_PHYS_BASE(6), msr);
+	}
 
 	msr = rdmsr(SYSCFG_MSR);
 	msr.lo &= ~SYSCFG_MSR_MtrrFixDramModEn;
