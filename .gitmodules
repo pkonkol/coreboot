@@ -60,5 +60,5 @@
 	branch = stmpe
 [submodule "payloads/external/landing-zone"]
 	path = payloads/external/landing-zone
-	url = https://github.com/TrenchBoot/landing-zone.git
+	url = https://github.com/3mdeb/landing-zone.git
 
