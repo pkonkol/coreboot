@@ -16,7 +16,7 @@
 project_name=Linux
 project_dir=$(CURDIR)/linux
 project_git_repo=https://github.com/3mdeb/linux-stable.git
-project_git_branch=linux-sl-5.1-sha2-amd
+project_git_branch=amd_event_log
 
 unexport $(COREBOOT_EXPORTS)
 
@@ -24,11 +24,11 @@ all: build
 
 $(project_dir):
 	echo "    Cloning $(project_name) from Git"
-	git clone $(project_git_repo) $(project_dir) --depth=1 -b $(project_git_branch)
+	git clone $(project_git_repo) $(project_dir) --depth 1 --single-branch -b $(project_git_branch)
 
 build: $(project_dir)
 	echo "    MAKE       $(project_name)"
-	cp $(CURDIR)/linux_defconfig-5.1 $(project_dir)/.config
+	cp $(project_dir)/arch/x86/configs/securelaunch_defconfig $(project_dir)/.config
 	$(MAKE) -C $(project_dir) olddefconfig V=1
 	$(MAKE) -C $(project_dir) bzImage V=1
 	cp $(project_dir)/arch/x86/boot/bzImage $(project_dir)/bzImage
