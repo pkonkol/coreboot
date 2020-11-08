@@ -147,7 +147,7 @@ config RO_REGION_ONLY
 
 config RW_REGION_ONLY
 	string
-	default "fallback/payload"
+	default "fallback/payload bzImage initrd"  if VBOOT
 
 config AGESA_USE_1_0_0_4_HEADER
 	bool
