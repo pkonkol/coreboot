@@ -1,5 +1,8 @@
-CONFIG_ATA_DMA=y
-CONFIG_ATA_PIO32=y
+# CONFIG_ATA is not set
+# CONFIG_AHCI is not set
+# CONFIG_SDCARD is not set
+# CONFIG_USB is not set
+# CONFIG_DRIVES is not set
 # CONFIG_BOOTSPLASH is not set
 # CONFIG_MEGASAS is not set
 # CONFIG_FLOPPY is not set

@@ -27,8 +27,10 @@ verstage_x86-y += pmutil.c
 SPD_SOURCES  = HYNIX-2G-1333
 SPD_SOURCES += HYNIX-4G-1333-ECC
 
+ifeq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
 cbfs-files-y += bootorder
 bootorder-file := bootorder_def
 bootorder-type := raw
+endif
 
 subdirs-y += variants/$(VARIANT_DIR)

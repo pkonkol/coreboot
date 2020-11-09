@@ -839,9 +839,7 @@ define cbfs-add-cmd-for-region
 	-r $(2) \
 	$(if $(call extract_nth,6,$(1)),-a $(call extract_nth,6,$(file)), \
 		$(if $(call extract_nth,5,$(file)),-b $(call extract_nth,5,$(file)))) \
-		$(call extract_nth,7,$(1)) && \
-	$(CBFSTOOL) $@.tmp print -r $(2) 
-
+		$(call extract_nth,7,$(1))
 
 endef
 # Empty line before endef is necessary so cbfs-add-cmd-for-region ends in a
