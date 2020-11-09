@@ -839,7 +839,8 @@ define cbfs-add-cmd-for-region
 	-r $(2) \
 	$(if $(call extract_nth,6,$(1)),-a $(call extract_nth,6,$(file)), \
 		$(if $(call extract_nth,5,$(file)),-b $(call extract_nth,5,$(file)))) \
-		$(call extract_nth,7,$(1))
+		$(call extract_nth,7,$(1)) && \
+	$(CBFSTOOL) $@.tmp print -r $(2) 
 
 
 endef
@@ -1179,9 +1180,6 @@ endif # CONFIG_CPU_INTEL_FIRMWARE_INTERFACE_TABLE
 ifeq ($(CONFIG_AGESA_UCODE_EXPERIMENTAL),y)
 	dd if=$(CONFIG_CPU_UCODE_BINARIES) of=$@.tmp bs=1 seek=6665692 count=3424 conv=notrunc 2> /dev/null
 endif
-	$(CBFSTOOL) $@.tmp remove -r COREBOOT -n linux/payload
-	$(CBFSTOOL) $@.tmp add-payload -f bzImage -n fallback/payload -c none \
-		-r COREBOOT -C "console=ttyS0,115200 iomem=relaxed" -I "initrd.cpio.xz"
 	mv $@.tmp $@
 	@printf "    CBFSLAYOUT  $(subst $(obj)/,,$(@))\n\n"
 	$(CBFSTOOL) $@ layout
