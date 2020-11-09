@@ -216,7 +216,7 @@ grub2: $(obj)/config.h
 
 lzheader:
 	$(MAKE) -C payloads/external/landing-zone \
-			CC="$(HOSTCC) 32=y DEBUG=y"
+			DEBUG=y 32=y CC="$(HOSTCC) "
 
 linux:
 	$(MAKE) -C payloads/external/linux

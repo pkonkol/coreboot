@@ -15,7 +15,7 @@
 
 project_name=Linux
 project_dir=$(CURDIR)/linux
-project_git_repo=https://github.com/3mdeb/linux-stable.git
+project_git_repo=https://github.com/3mdeb/linux.git
 project_git_branch=amd_event_log
 
 unexport $(COREBOOT_EXPORTS)
