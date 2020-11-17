@@ -118,12 +118,11 @@ config FMDFILE
 	default "src/mainboard/$(CONFIG_MAINBOARD_DIR)/vboot-rw-ab.fmd" if VBOOT
 
 config CBFS_SIZE
-	hex
-	default 0x0020C000 if VBOOT
+	hexi
 	default 0x00800000
 
 config VBOOT
-	select VBOOT_VBNV_CMOS
+	select VBOOT_VBNV_FLASH
 	select VBOOT_NO_BOARD_SUPPORT
 	select GBB_FLAG_DISABLE_LID_SHUTDOWN
 	select GBB_FLAG_DISABLE_PD_SOFTWARE_SYNC
@@ -139,15 +138,15 @@ config VBOOT_MEASURED_BOOT_RUNTIME_DATA
 
 config VBOOT_VBNV_OFFSET
 	hex
-	default 0x2D8 if VBOOT
+	default 0x2D8 if VBOOT_VBNV_CMOS
 
 config RO_REGION_ONLY
 	string
-	default "spd.bin AGESA apu/amdfw" if VBOOT
+	default "AGESA apu/amdfw" if VBOOT
 
 config RW_REGION_ONLY
 	string
-	default "fallback/payload bzImage initrd"  if VBOOT
+	default "fallback/payload" if VBOOT
 
 config AGESA_USE_1_0_0_4_HEADER
 	bool
