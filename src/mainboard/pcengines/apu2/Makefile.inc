@@ -39,4 +39,15 @@ bootorder-file := bootorder_def
 bootorder-type := raw
 endif
 
+LINUX_OPTIONS=-I initrd.cpio.xz
+LINUX_OPTIONS+=-C "console=ttyS0,115200 iomem=relaxed"
+
+cbfs-files-y += linux/payload
+linux/payload-file := bzImage
+linux/payload-type := payload
+linux/payload-compression := none
+linux/payload-options := $(LINUX_OPTIONS)
+linux/payload-COREBOOT-position := 0x100
+
+
 subdirs-y += variants/$(VARIANT_DIR)

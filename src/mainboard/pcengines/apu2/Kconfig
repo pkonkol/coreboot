@@ -118,7 +118,7 @@ config FMDFILE
 	default "src/mainboard/$(CONFIG_MAINBOARD_DIR)/vboot-rw-ab.fmd" if VBOOT
 
 config CBFS_SIZE
-	hexi
+	hex
 	default 0x00800000
 
 config VBOOT
@@ -142,7 +142,7 @@ config VBOOT_VBNV_OFFSET
 
 config RO_REGION_ONLY
 	string
-	default "AGESA apu/amdfw" if VBOOT
+	default "AGESA apu/amdfw linux/payload" if VBOOT
 
 config RW_REGION_ONLY
 	string
